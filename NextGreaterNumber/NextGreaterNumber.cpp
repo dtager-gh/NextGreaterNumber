@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <unordered_map>
 using namespace std;
 
 //vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
@@ -32,33 +34,75 @@ using namespace std;
 //    return result;
 //};
 
-vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+//vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+//
+//    vector<int> result;
+//
+//    for (int num : nums1) {// iterate over nums1 using range-based for loop
+//
+//        int nextGreater = -1; // default if no greater is found
+//        bool found = false;
+//
+//        for (int n : nums2) { // iterate over nums2
+//
+//            if (found && n > num) { // once we found the num in nums2, check for next greater
+//                nextGreater = n;
+//                break;
+//            }
+//
+//            if (n == num) {
+//                found = true; // mark that we've found num in nums2
+//            }
+//
+//        }
+//
+//        result.push_back(nextGreater);
+//    }
+//
+//    return result;
+//}
+
+
+
+vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) { //pass in numbers by reference
+
+    unordered_map<int, int> nextGreater;  // map next greater
+
+    stack<int> st;  // monotonic decreasing stack
+
+    for (int n : nums2) {   //loop through nums2
+        
+        while (!st.empty() && n > st.top()) {   // while the stack is not empty and current n is greater than the top of stack
+
+            nextGreater[st.top()] = n;  // found the next greater
+
+            st.pop();
+        }
+
+        st.push(n);
+
+    }
+
+    // remaining stack elements have no next greater
+    while (!st.empty()) {
+
+        nextGreater[st.top()] = -1; // assign -1 to each of the stack elements
+
+        st.pop(); // pop the element from the stack
+
+    }
 
     vector<int> result;
 
-    for (int num : nums1) {// iterate over nums1 using range-based for loop
+    for (int num : nums1) {  // loop through nums1
 
-        int nextGreater = -1; // default if no greater is found
-        bool found = false;
+        result.push_back(nextGreater[num]); //push the value of each into result
 
-        for (int n : nums2) { // iterate over nums2
-
-            if (found && n > num) { // once we found the num in nums2, check for next greater
-                nextGreater = n;
-                break;
-            }
-
-            if (n == num) {
-                found = true; // mark that we've found num in nums2
-            }
-
-        }
-
-        result.push_back(nextGreater);
     }
 
     return result;
 }
+
 
 int main() {
 
@@ -70,18 +114,13 @@ int main() {
 
     cout << "Result: ";
 
-    /*for (int i = 0; i < result.size(); i++) {
-        cout << result[i] << " ";
-    }
-
-    cout << endl; cout << endl;*/
-
-    for (int n : result) {
+    for (int n : result) { 
         cout << n << " ";
     }
 
     cout << endl;
 
     return 0;
+
 }
 
